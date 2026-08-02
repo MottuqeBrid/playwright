@@ -6,7 +6,7 @@ password = "secret_sauce"
 user_name = "standard_user"
 
 
-def run(playwright: Playwright) -> None:
+def test_login_with_valid_creadential(playwright: Playwright) -> None:
     browser = playwright.chromium.launch(headless=False, slow_mo=1000)
     context = browser.new_context()
     page = context.new_page()
@@ -20,12 +20,6 @@ def run(playwright: Playwright) -> None:
     assert product_header.is_visible(), "User is unable to login"
 
     burger_menu = page.locator("#react-burger-menu-btn")
-    page.pause()
-    burger_menu.click()
-    logout_btn = page.locator("#logout_sidebar_link")
-    assert logout_btn.is_visible(), "Logout button is not visible"
-    page.pause()
-    logout_btn.click()
 
     login_btn = page.locator("#login-button")
     assert login_btn.is_visible(), "Login button is not visible"
@@ -36,5 +30,22 @@ def run(playwright: Playwright) -> None:
     browser.close()
 
 
+def test_logout(playwright: Playwright) -> None:
+    browser = playwright.chromium.launch(headless=False, slow_mo=1000)
+    context = browser.new_context()
+    page = context.new_page()
+    burger_menu = page.locator("#react-burger-menu-btn")
+    page.pause()
+    burger_menu.click()
+    logout_btn = page.locator("#logout_sidebar_link")
+    assert logout_btn.is_visible(), "Logout button is not visible"
+    page.pause()
+    logout_btn.click()
+
+    # Stop tracing and export it into a zip archive.
+    context.close()
+    browser.close()
+
+
 with sync_playwright() as playwright:
-    run(playwright)
+    test_login_with_valid_creadential(playwright)
